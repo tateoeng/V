@@ -1,8 +1,4 @@
 #!/bin/python
-# propose: this script should act as a wrapper for a "function" which,
-# after accepting a list of coordinates of unique positions and a space group,
-# returns the full list of coordinates of symmetry equivalent positions
-# in the unit cell.
 
 from sys import argv as argument
 
