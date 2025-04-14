@@ -17,59 +17,59 @@ import * as THREE from 'three';
 
 function main() {
 
-	const canvas = document.querySelector( '#c' );
-	const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
+    const canvas = document.querySelector( '#c' );
+    const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
 
-	// camera
+    // camera
     const fov = 40;
-	const aspect = 2; // the canvas default
-	const near = 0.1;
-	const far = 1000;
-	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-	camera.position.z = 50;
+    const aspect = 2; // the canvas default
+    const near = 0.1;
+    const far = 1000;
+    const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
+    camera.position.z = 50;
 
     // scene
-	const scene = new THREE.Scene();
-	scene.background = new THREE.Color( 0xFFFFFF );
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color( 0xFFFFFF );
 
-	// 2 directional lights, set up in different positions
+    // 2 directional lights, set up in different positions
     {
-		const color = 0xFFFFFF;
-		const intensity = 3;
-		const light = new THREE.DirectionalLight( color, intensity );
-		light.position.set( - 1, 2, 4 );
-		scene.add( light ); 
+        const color = 0xFFFFFF;
+        const intensity = 3;
+        const light = new THREE.DirectionalLight( color, intensity );
+        light.position.set( - 1, 2, 4 );
+        scene.add( light ); 
     }
 
-	{
-		const color = 0xFFFFFF;
-		const intensity = 3;
-		const light = new THREE.DirectionalLight( color, intensity );
-		light.position.set( 1, - 2, - 4 );
-		scene.add( light ); 
+    {
+        const color = 0xFFFFFF;
+        const intensity = 3;
+        const light = new THREE.DirectionalLight( color, intensity );
+        light.position.set( 1, - 2, - 4 );
+        scene.add( light ); 
     }
 
-	const objects = [];
-	const spread = 1;
+    const objects = [];
+    const spread = 1;
 
-	function addObject( x, y, z, obj ) {
+    function addObject( x, y, z, obj ) {
 
-		obj.position.x = x * spread;
-		obj.position.y = y * spread;
-		obj.position.z = z * spread;
+        obj.position.x = x * spread;
+        obj.position.y = y * spread;
+        obj.position.z = z * spread;
 
-		scene.add( obj );
-		objects.push( obj );
+        scene.add( obj );
+        objects.push( obj );
 
-	}
+    }
 
-	function addLineGeometry( x, y, z, geometry ) {
+    function addLineGeometry( x, y, z, geometry ) {
 
-		const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
-		const mesh = new THREE.LineSegments( geometry, material );
-		addObject( x, y, z, mesh );
+        const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
+        const mesh = new THREE.LineSegments( geometry, material );
+        addObject( x, y, z, mesh );
 
-	}
+    }
 
     var ucx = 15.5912;
     var ucy = 15.5912;
@@ -119,52 +119,52 @@ function main() {
     }
 
     // listener that returns if browser resizes
-	function resizeRendererToDisplaySize( renderer ) {
+    function resizeRendererToDisplaySize( renderer ) {
 
-		const canvas = renderer.domElement;
-		const width = canvas.clientWidth;
-		const height = canvas.clientHeight;
-		const needResize = canvas.width !== width || canvas.height !== height;
-		if ( needResize ) {
+        const canvas = renderer.domElement;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        const needResize = canvas.width !== width || canvas.height !== height;
+        if ( needResize ) {
 
-			renderer.setSize( width, height, false );
+            renderer.setSize( width, height, false );
 
-		}
+        }
 
-		return needResize;
+        return needResize;
 
-	}
+    }
 
-	function render( time ) {
+    function render( time ) {
 
         // if browser is resized, adjust camera aspect and update the camera
-		if ( resizeRendererToDisplaySize( renderer ) ) {
+        if ( resizeRendererToDisplaySize( renderer ) ) {
 
-			const canvas = renderer.domElement;
-			camera.aspect = canvas.clientWidth / canvas.clientHeight;
-			camera.updateProjectionMatrix();
+            const canvas = renderer.domElement;
+            camera.aspect = canvas.clientWidth / canvas.clientHeight;
+            camera.updateProjectionMatrix();
 
-		}
+        }
 
-		time *= 0.001;
+        time *= 0.001;
         
         //for each object in objects, establish a rotation speed as a function of its index
-		objects.forEach( ( obj, ndx ) => {
+        objects.forEach( ( obj, ndx ) => {
         
             const speed = 0.1;
             const rot = time * speed;
             obj.rotation.x = rot;
-			obj.rotation.y = rot*1.5;
+            obj.rotation.y = rot*1.5;
         
-		} );
+        } );
 
-		renderer.render( scene, camera );
+        renderer.render( scene, camera );
         
-		requestAnimationFrame( render );
+        requestAnimationFrame( render );
 
-	}
+    }
 
-	requestAnimationFrame( render );
+    requestAnimationFrame( render );
 
 }
 
