@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -64,28 +63,6 @@ function main() {
 
 	}
 
-	function createMaterial() {
-
-		const material = new THREE.MeshPhongMaterial( {
-			side: THREE.DoubleSide,
-		} );
-
-		const hue = Math.random();
-		const saturation = 1;
-		const luminance = .5;
-		material.color.setHSL( hue, saturation, luminance );
-
-		return material;
-
-	}
-
-	function addSolidGeometry( x, y, z, geometry ) {
-
-		const mesh = new THREE.Mesh( geometry, createMaterial() );
-		addObject( x, y, z, mesh );
-
-	}
-
 	function addLineGeometry( x, y, z, geometry ) {
 
 		const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
@@ -93,39 +70,6 @@ function main() {
 		addObject( x, y, z, mesh );
 
 	}
-
-    // polyhedron geometry - possible asset to define triclinic, monoclinic, trigonal and hexagonal unit cells
-	//{
-    //
-	//	const verticesOfCube = [
-	//		- 1, - 1, - 1,        1, - 1, - 1,
-    //          1,   1, - 1,      - 1,   1, - 1,
-	//		- 1, - 1,   1,        1, - 1,   1,
-    //          1,   1,   1,      - 1,   1,   1,
-	//	];
-	//	const indicesOfFaces = [
-	//		2, 1, 0,   0, 3, 2,
-	//		0, 4, 7,   7, 3, 0,
-	//		0, 1, 5,   5, 4, 0,
-	//		1, 2, 6,   6, 5, 1,
-	//		2, 3, 7,   7, 6, 2,
-	//		4, 5, 6,   6, 7, 4,
-	//	];
-	//	const radius = 7;
-	//	const detail = 2;
-	//	addLineGeometry( - 1, 0, new THREE.PolyhedronGeometry( verticesOfCube, indicesOfFaces, radius, detail ) );
-    //
-	//}
-
-    // sphere
-	//{
-    //
-	//	const radius = 7;
-	//	const widthSegments = 12;
-	//	const heightSegments = 8;
-	//	addSolidGeometry( 2, 0, new THREE.SphereGeometry( radius, widthSegments, heightSegments ) );
-    //
-	//}
 
     var ucx = 15.5912;
     var ucy = 15.5912;
@@ -193,8 +137,6 @@ function main() {
 
 	function render( time ) {
 
-		time *= 0.001;
-
         // if browser is resized, adjust camera aspect and update the camera
 		if ( resizeRendererToDisplaySize( renderer ) ) {
 
@@ -204,14 +146,16 @@ function main() {
 
 		}
 
-        // for each object in objects, establish a rotation speed as a function of its index
+		time *= 0.001;
+        
+        //for each object in objects, establish a rotation speed as a function of its index
 		objects.forEach( ( obj, ndx ) => {
-
-			const speed = 0.05;
-			const rot = time * speed;
-			obj.rotation.x = rot;
+        
+            const speed = 0.1;
+            const rot = time * speed;
+            obj.rotation.x = rot;
 			obj.rotation.y = rot*1.5;
-
+        
 		} );
 
 		renderer.render( scene, camera );
