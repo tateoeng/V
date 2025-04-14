@@ -1,209 +1,230 @@
+
+<!DOCTYPE html>
 <html>
 <head>
-    <title>TOE115A1collect_0m</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Three.js - Fundamentals 3 cubes</title>
     <style>
-        body {margin: 0;}
-        canvas {width: 100%; height: 100%}</style></head>
+        html, body { margin: 0; height: 100%; }
+        #c { width: 100%; height: 100%; display: block; } </style>
+        
+    <script type="importmap"> {
+        "imports": {
+            "three": "./build/three.module.js" } } </script>
+
+    <script type="module">
+import * as THREE from 'three';
+
+function main() {
+
+	const canvas = document.querySelector( '#c' );
+	const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
+
+	// camera
+    const fov = 40;
+	const aspect = 2; // the canvas default
+	const near = 0.1;
+	const far = 1000;
+	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
+	camera.position.z = 50;
+
+    // scene
+	const scene = new THREE.Scene();
+	scene.background = new THREE.Color( 0xFFFFFF );
+
+	// 2 directional lights, set up in different positions
+    {
+		const color = 0xFFFFFF;
+		const intensity = 3;
+		const light = new THREE.DirectionalLight( color, intensity );
+		light.position.set( - 1, 2, 4 );
+		scene.add( light ); 
+    }
+
+	{
+		const color = 0xFFFFFF;
+		const intensity = 3;
+		const light = new THREE.DirectionalLight( color, intensity );
+		light.position.set( 1, - 2, - 4 );
+		scene.add( light ); 
+    }
+
+	const objects = [];
+	const spread = 1;
+
+	function addObject( x, y, z, obj ) {
+
+		obj.position.x = x * spread;
+		obj.position.y = y * spread;
+		obj.position.z = z * spread;
+
+		scene.add( obj );
+		objects.push( obj );
+
+	}
+
+	function createMaterial() {
+
+		const material = new THREE.MeshPhongMaterial( {
+			side: THREE.DoubleSide,
+		} );
+
+		const hue = Math.random();
+		const saturation = 1;
+		const luminance = .5;
+		material.color.setHSL( hue, saturation, luminance );
+
+		return material;
+
+	}
+
+	function addSolidGeometry( x, y, z, geometry ) {
+
+		const mesh = new THREE.Mesh( geometry, createMaterial() );
+		addObject( x, y, z, mesh );
+
+	}
+
+	function addLineGeometry( x, y, z, geometry ) {
+
+		const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
+		const mesh = new THREE.LineSegments( geometry, material );
+		addObject( x, y, z, mesh );
+
+	}
+
+    // polyhedron geometry - possible asset to define triclinic, monoclinic, trigonal and hexagonal unit cells
+	//{
+    //
+	//	const verticesOfCube = [
+	//		- 1, - 1, - 1,        1, - 1, - 1,
+    //          1,   1, - 1,      - 1,   1, - 1,
+	//		- 1, - 1,   1,        1, - 1,   1,
+    //          1,   1,   1,      - 1,   1,   1,
+	//	];
+	//	const indicesOfFaces = [
+	//		2, 1, 0,   0, 3, 2,
+	//		0, 4, 7,   7, 3, 0,
+	//		0, 1, 5,   5, 4, 0,
+	//		1, 2, 6,   6, 5, 1,
+	//		2, 3, 7,   7, 6, 2,
+	//		4, 5, 6,   6, 7, 4,
+	//	];
+	//	const radius = 7;
+	//	const detail = 2;
+	//	addLineGeometry( - 1, 0, new THREE.PolyhedronGeometry( verticesOfCube, indicesOfFaces, radius, detail ) );
+    //
+	//}
+
+    // sphere
+	//{
+    //
+	//	const radius = 7;
+	//	const widthSegments = 12;
+	//	const heightSegments = 8;
+	//	addSolidGeometry( 2, 0, new THREE.SphereGeometry( radius, widthSegments, heightSegments ) );
+    //
+	//}
+
+    var ucx = 15.5912;
+    var ucy = 15.5912;
+    var ucz = 15.5912;
+
+    var data = [['PR1', 1.86, 0xD9FFC8, [[0.0, 0.162959, 0.162959], [0.0, 0.162959, 0.837041], [0.0, 0.337041, 0.337041], [0.0, 0.337041, 0.662959], [0.0, 0.662959, 0.337041], [0.0, 0.662959, 0.662959], [0.0, 0.837041, 0.162959], [0.0, 0.837041, 0.837041], [0.162959, 0.0, 0.162959], [0.162959, 0.0, 0.837041], [0.162959, 0.162959, 0.0], [0.162959, 0.162959, 1.0], [0.162959, 0.337041, 0.5], [0.162959, 0.5, 0.337041], [0.162959, 0.5, 0.662959], [0.162959, 0.662959, 0.5], [0.162959, 0.837041, 0.0], [0.162959, 0.837041, 1.0], [0.162959, 1.0, 0.162959], [0.162959, 1.0, 0.837041], [0.337041, 0.0, 0.337041], [0.337041, 0.0, 0.662959], [0.337041, 0.162959, 0.5], [0.337041, 0.337041, 0.0], [0.337041, 0.337041, 1.0], [0.337041, 0.5, 0.162959], [0.337041, 0.5, 0.837041], [0.337041, 0.662959, 0.0], [0.337041, 0.662959, 1.0], [0.337041, 0.837041, 0.5], [0.337041, 1.0, 0.337041], [0.337041, 1.0, 0.662959], [0.5, 0.162959, 0.337041], [0.5, 0.162959, 0.662959], [0.5, 0.337041, 0.162959], [0.5, 0.337041, 0.837041], [0.5, 0.662959, 0.162959], [0.5, 0.662959, 0.837041], [0.5, 0.837041, 0.337041], [0.5, 0.837041, 0.662959], [0.662959, 0.0, 0.337041], [0.662959, 0.0, 0.662959], [0.662959, 0.162959, 0.5], [0.662959, 0.337041, 0.0], [0.662959, 0.337041, 1.0], [0.662959, 0.5, 0.162959], [0.662959, 0.5, 0.837041], [0.662959, 0.662959, 0.0], [0.662959, 0.662959, 1.0], [0.662959, 0.837041, 0.5], [0.662959, 1.0, 0.337041], [0.662959, 1.0, 0.662959], [0.837041, 0.0, 0.162959], [0.837041, 0.0, 0.837041], [0.837041, 0.162959, 0.0], [0.837041, 0.162959, 1.0], [0.837041, 0.337041, 0.5], [0.837041, 0.5, 0.337041], [0.837041, 0.5, 0.662959], [0.837041, 0.662959, 0.5], [0.837041, 0.837041, 0.0], [0.837041, 0.837041, 1.0], [0.837041, 1.0, 0.162959], [0.837041, 1.0, 0.837041], [1.0, 0.162959, 0.162959], [1.0, 0.162959, 0.837041], [1.0, 0.337041, 0.337041], [1.0, 0.337041, 0.662959], [1.0, 0.662959, 0.337041], [1.0, 0.662959, 0.662959], [1.0, 0.837041, 0.162959], [1.0, 0.837041, 0.837041]]], 
+                ['PR2', 1.86, 0xD9FFC8, [[0.13226, 0.13226, 0.36774], [0.13226, 0.13226, 0.63226], [0.13226, 0.36774, 0.13226], [0.13226, 0.36774, 0.86774], [0.13226, 0.63226, 0.13226], [0.13226, 0.63226, 0.86774], [0.13226, 0.86774, 0.36774], [0.13226, 0.86774, 0.63226], [0.36774, 0.13226, 0.13226], [0.36774, 0.13226, 0.86774], [0.36774, 0.36774, 0.36774], [0.36774, 0.36774, 0.63226], [0.36774, 0.63226, 0.36774], [0.36774, 0.63226, 0.63226], [0.36774, 0.86774, 0.13226], [0.36774, 0.86774, 0.86774], [0.63226, 0.13226, 0.13226], [0.63226, 0.13226, 0.86774], [0.63226, 0.36774, 0.36774], [0.63226, 0.36774, 0.63226], [0.63226, 0.63226, 0.36774], [0.63226, 0.63226, 0.63226], [0.63226, 0.86774, 0.13226], [0.63226, 0.86774, 0.86774], [0.86774, 0.13226, 0.36774], [0.86774, 0.13226, 0.63226], [0.86774, 0.36774, 0.13226], [0.86774, 0.36774, 0.86774], [0.86774, 0.63226, 0.13226], [0.86774, 0.63226, 0.86774], [0.86774, 0.86774, 0.36774], [0.86774, 0.86774, 0.63226]]], 
+                ['PR3', 1.86, 0xD9FFC8, [[0.0, 0.0, 0.5], [0.0, 0.5, 0.0], [0.0, 0.5, 1.0], [0.0, 1.0, 0.5], [0.5, 0.0, 0.0], [0.5, 0.0, 1.0], [0.5, 0.5, 0.5], [0.5, 1.0, 0.0], [0.5, 1.0, 1.0], [1.0, 0.0, 0.5], [1.0, 0.5, 0.0], [1.0, 0.5, 1.0], [1.0, 1.0, 0.5]]], 
+                ['PR4', 1.86, 0xD9FFC8, [[0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.5, 0.5], [0.0, 1.0, 0.0], [0.0, 1.0, 1.0], [0.5, 0.0, 0.5], [0.5, 0.5, 0.0], [0.5, 0.5, 1.0], [0.5, 1.0, 0.5], [1.0, 0.0, 0.0], [1.0, 0.0, 1.0], [1.0, 0.5, 0.5], [1.0, 1.0, 0.0], [1.0, 1.0, 1.0]]], 
+                ['FE1', 1.25, 0xff0000, [[0.192322, 0.192322, 0.192322], [0.192322, 0.192322, 0.807678], [0.192322, 0.307678, 0.307678], [0.192322, 0.307678, 0.692322], [0.192322, 0.692322, 0.307678], [0.192322, 0.692322, 0.692322], [0.192322, 0.807678, 0.192322], [0.192322, 0.807678, 0.807678], [0.307678, 0.192322, 0.307678], [0.307678, 0.192322, 0.692322], [0.307678, 0.307678, 0.192322], [0.307678, 0.307678, 0.807678], [0.307678, 0.692322, 0.192322], [0.307678, 0.692322, 0.807678], [0.307678, 0.807678, 0.307678], [0.307678, 0.807678, 0.692322], [0.692322, 0.192322, 0.307678], [0.692322, 0.192322, 0.692322], [0.692322, 0.307678, 0.192322], [0.692322, 0.307678, 0.807678], [0.692322, 0.692322, 0.192322], [0.692322, 0.692322, 0.807678], [0.692322, 0.807678, 0.307678], [0.692322, 0.807678, 0.692322], [0.807678, 0.192322, 0.192322], [0.807678, 0.192322, 0.807678], [0.807678, 0.307678, 0.307678], [0.807678, 0.307678, 0.692322], [0.807678, 0.692322, 0.307678], [0.807678, 0.692322, 0.692322], [0.807678, 0.807678, 0.192322], [0.807678, 0.807678, 0.807678]]], 
+                ['SI1', 1.17, 0x819A9A, [[0.0, 0.0, 0.291237], [0.0, 0.0, 0.708763], [0.0, 0.208763, 0.5], [0.0, 0.291237, 0.0], [0.0, 0.291237, 1.0], [0.0, 0.5, 0.208763], [0.0, 0.5, 0.791237], [0.0, 0.708763, 0.0], [0.0, 0.708763, 1.0], [0.0, 0.791237, 0.5], [0.0, 1.0, 0.291237], [0.0, 1.0, 0.708763], [0.208763, 0.0, 0.5], [0.208763, 0.5, 0.0], [0.208763, 0.5, 1.0], [0.208763, 1.0, 0.5], [0.291237, 0.0, 0.0], [0.291237, 0.0, 1.0], [0.291237, 0.5, 0.5], [0.291237, 1.0, 0.0], [0.291237, 1.0, 1.0], [0.5, 0.0, 0.208763], [0.5, 0.0, 0.791237], [0.5, 0.208763, 0.0], [0.5, 0.208763, 1.0], [0.5, 0.291237, 0.5], [0.5, 0.5, 0.291237], [0.5, 0.5, 0.708763], [0.5, 0.708763, 0.5], [0.5, 0.791237, 0.0], [0.5, 0.791237, 1.0], [0.5, 1.0, 0.208763], [0.5, 1.0, 0.791237], [0.708763, 0.0, 0.0], [0.708763, 0.0, 1.0], [0.708763, 0.5, 0.5], [0.708763, 1.0, 0.0], [0.708763, 1.0, 1.0], [0.791237, 0.0, 0.5], [0.791237, 0.5, 0.0], [0.791237, 0.5, 1.0], [0.791237, 1.0, 0.5], [1.0, 0.0, 0.291237], [1.0, 0.0, 0.708763], [1.0, 0.208763, 0.5], [1.0, 0.291237, 0.0], [1.0, 0.291237, 1.0], [1.0, 0.5, 0.208763], [1.0, 0.5, 0.791237], [1.0, 0.708763, 0.0], [1.0, 0.708763, 1.0], [1.0, 0.791237, 0.5], [1.0, 1.0, 0.291237], [1.0, 1.0, 0.708763]]], 
+                ['C1', 0.77, 0x000000, [[0.101317, 0.25, 0.25], [0.101317, 0.25, 0.75], [0.101317, 0.75, 0.25], [0.101317, 0.75, 0.75], [0.25, 0.101317, 0.25], [0.25, 0.101317, 0.75], [0.25, 0.25, 0.101317], [0.25, 0.25, 0.398683], [0.25, 0.25, 0.601317], [0.25, 0.25, 0.898683], [0.25, 0.398683, 0.25], [0.25, 0.398683, 0.75], [0.25, 0.601317, 0.25], [0.25, 0.601317, 0.75], [0.25, 0.75, 0.101317], [0.25, 0.75, 0.398683], [0.25, 0.75, 0.601317], [0.25, 0.75, 0.898683], [0.25, 0.898683, 0.25], [0.25, 0.898683, 0.75], [0.398683, 0.25, 0.25], [0.398683, 0.25, 0.75], [0.398683, 0.75, 0.25], [0.398683, 0.75, 0.75], [0.601317, 0.25, 0.25], [0.601317, 0.25, 0.75], [0.601317, 0.75, 0.25], [0.601317, 0.75, 0.75], [0.75, 0.101317, 0.25], [0.75, 0.101317, 0.75], [0.75, 0.25, 0.101317], [0.75, 0.25, 0.398683], [0.75, 0.25, 0.601317], [0.75, 0.25, 0.898683], [0.75, 0.398683, 0.25], [0.75, 0.398683, 0.75], [0.75, 0.601317, 0.25], [0.75, 0.601317, 0.75], [0.75, 0.75, 0.101317], [0.75, 0.75, 0.398683], [0.75, 0.75, 0.601317], [0.75, 0.75, 0.898683], [0.75, 0.898683, 0.25], [0.75, 0.898683, 0.75], [0.898683, 0.25, 0.25], [0.898683, 0.25, 0.75], [0.898683, 0.75, 0.25], [0.898683, 0.75, 0.75]]]];
+
+    // unit cell outline
+    {
+        const width  = ucx;
+        const height = ucy;
+        const depth  = ucz;
+        addLineGeometry( 0, 0, 0, new THREE.EdgesGeometry( new THREE.BoxGeometry( width, height, depth ) ) ); }
+
+    var atomScale = 0.5;
+ 
+    for (var j = 0; j < data.length; j++) {
+        var name = data[j][0];
+        var radius = data[j][1];
+        var colorCode = data[j][2];
+        var positions = data[j][3];
+        
+        radius = radius * atomScale;
+        var widthSegments = 8;
+        var heightSegments = 8;
+        
+        var sphere = new THREE.SphereGeometry( radius, widthSegments, heightSegments );
+
+        var ucContent = new THREE.Group();
+        ucContent.name = name;
+
+        for ( var i = 0; i < positions.length; i ++ ) {
+            var atom = new THREE.Mesh( sphere, new THREE.MeshPhongMaterial( { color: colorCode, wireframe: false } ) );
+            atom.position.x = ucx * positions[i][0] - atomScale * ucx;
+            atom.position.y = ucy * positions[i][1] - atomScale * ucy;
+            atom.position.z = ucz * positions[i][2] - atomScale * ucz;
+            ucContent.add( atom );
+        }
+        
+        addObject( 0, 0, 0, ucContent );
+    }
+
+    // listener that returns if browser resizes
+	function resizeRendererToDisplaySize( renderer ) {
+
+		const canvas = renderer.domElement;
+		const width = canvas.clientWidth;
+		const height = canvas.clientHeight;
+		const needResize = canvas.width !== width || canvas.height !== height;
+		if ( needResize ) {
+
+			renderer.setSize( width, height, false );
+
+		}
+
+		return needResize;
+
+	}
+
+	function render( time ) {
+
+		time *= 0.001;
+
+        // if browser is resized, adjust camera aspect and update the camera
+		if ( resizeRendererToDisplaySize( renderer ) ) {
+
+			const canvas = renderer.domElement;
+			camera.aspect = canvas.clientWidth / canvas.clientHeight;
+			camera.updateProjectionMatrix();
+
+		}
+
+        // for each object in objects, establish a rotation speed as a function of its index
+		objects.forEach( ( obj, ndx ) => {
+
+			const speed = 0.05;
+			const rot = time * speed;
+			obj.rotation.x = rot;
+			obj.rotation.y = rot*1.5;
+
+		} );
+
+		renderer.render( scene, camera );
+        
+		requestAnimationFrame( render );
+
+	}
+
+	requestAnimationFrame( render );
+
+}
+
+main();</script></head>
+
 <body>
-    <script src="js/three.min.js"></script>
-    <script>
-        var scene, camera, renderer;
-        var geometry, material, mesh;
-        var PR1 = ['PR1', 'PR', 1.86, 0xffff00, 0x0f0f0f, [(0.0, 0.162959, 0.162959), [0.0, 0.162959, 0.162959], [0.0, 0.837041, 0.162959], [0.0, 0.162959, 0.837041], [0.0, 0.837041, 0.837041], [0.0, 0.662959, 0.662959], [0.0, 0.337041, 0.662959], [0.0, 0.662959, 0.337041], [0.0, 0.337041, 0.337041], [0.162959, 0.0, 0.162959], [0.162959, 0.0, 0.837041], [0.162959, 0.162959, 0.0], [0.162959, 0.5, 0.662959], [0.162959, 0.5, 0.337041], [0.162959, 0.662959, 0.5], [0.162959, 1.0, 0.162959], [0.162959, 1.0, 0.837041], [0.162959, 0.837041, 0.0], [0.162959, 0.162959, 1.0], [0.162959, 0.337041, 0.5], [0.162959, 0.837041, 1.0], [0.337041, 0.0, 0.337041], [0.337041, 0.0, 0.662959], [0.337041, 0.162959, 0.5], [0.337041, 0.5, 0.162959], [0.337041, 0.5, 0.837041], [0.337041, 0.662959, 0.0], [0.337041, 0.337041, 0.0], [0.337041, 0.662959, 1.0], [0.337041, 1.0, 0.662959], [0.337041, 1.0, 0.337041], [0.337041, 0.837041, 0.5], [0.337041, 0.337041, 1.0], [0.5, 0.162959, 0.662959], [0.5, 0.837041, 0.662959], [0.5, 0.162959, 0.337041], [0.5, 0.837041, 0.337041], [0.5, 0.662959, 0.162959], [0.5, 0.337041, 0.162959], [0.5, 0.662959, 0.837041], [0.5, 0.337041, 0.837041], [0.662959, 0.0, 0.662959], [0.662959, 0.0, 0.337041], [0.662959, 0.5, 0.162959], [0.662959, 0.162959, 0.5], [0.662959, 0.5, 0.837041], [0.662959, 0.662959, 0.0], [0.662959, 1.0, 0.662959], [0.662959, 0.662959, 1.0], [0.662959, 1.0, 0.337041], [0.662959, 0.837041, 0.5], [0.662959, 0.337041, 0.0], [0.662959, 0.337041, 1.0], [0.837041, 0.0, 0.837041], [0.837041, 0.0, 0.162959], [0.837041, 0.162959, 0.0], [0.837041, 0.837041, 0.0], [0.837041, 0.5, 0.662959], [0.837041, 0.5, 0.337041], [0.837041, 0.662959, 0.5], [0.837041, 0.337041, 0.5], [0.837041, 1.0, 0.837041], [0.837041, 1.0, 0.162959], [0.837041, 0.162959, 1.0], [0.837041, 0.837041, 1.0], [1.0, 0.162959, 0.162959], [1.0, 0.837041, 0.162959], [1.0, 0.162959, 0.837041], [1.0, 0.837041, 0.837041], [1.0, 0.662959, 0.662959], [1.0, 0.337041, 0.662959], [1.0, 0.662959, 0.337041], [1.0, 0.337041, 0.337041]]];
-        var PR2 = ['PR2', 'PR', 1.86, 0xffff00, 0x252525, [[0.13226, 0.63226, 0.86774], [0.13226, 0.36774, 0.13226], [0.13226, 0.63226, 0.13226], [0.13226, 0.13226, 0.36774], [0.13226, 0.86774, 0.63226], [0.13226, 0.13226, 0.63226], [0.13226, 0.36774, 0.86774], [0.13226, 0.86774, 0.36774], (0.36774, 0.36774, 0.36774), [0.36774, 0.36774, 0.36774], [0.36774, 0.36774, 0.63226], [0.36774, 0.86774, 0.86774], [0.36774, 0.86774, 0.13226], [0.36774, 0.63226, 0.63226], [0.36774, 0.63226, 0.36774], [0.36774, 0.13226, 0.86774], [0.36774, 0.13226, 0.13226], [0.63226, 0.63226, 0.36774], [0.63226, 0.36774, 0.63226], [0.63226, 0.63226, 0.63226], [0.63226, 0.36774, 0.36774], [0.63226, 0.13226, 0.86774], [0.63226, 0.86774, 0.13226], [0.63226, 0.13226, 0.13226], [0.63226, 0.86774, 0.86774], [0.86774, 0.36774, 0.86774], [0.86774, 0.36774, 0.13226], [0.86774, 0.86774, 0.36774], [0.86774, 0.63226, 0.13226], [0.86774, 0.13226, 0.63226], [0.86774, 0.63226, 0.86774], [0.86774, 0.86774, 0.63226], [0.86774, 0.13226, 0.36774]]];
-        var PR3 = ['PR3', 'PR', 1.86, 0xffff00, 0xfefefe, [[0.0, 0.5, 1.0], [0.0, 0.5, 0.0], [0.0, 1.0, 0.5], [0.0, 0.0, 0.5], (0.5, 0.5, 0.5), [0.5, 0.5, 0.5], [0.5, 1.0, 1.0], [0.5, 0.0, 1.0], [0.5, 1.0, 0.0], [0.5, 0.0, 0.0], [1.0, 0.5, 1.0], [1.0, 0.5, 0.0], [1.0, 1.0, 0.5], [1.0, 0.0, 0.5]]];
-        var PR4 = ['PR4', 'PR', 1.86, 0xffff00, 0xdbdbdb, [(0.0, 0.0, 0.0), [0.0, 0.0, 0.0], [0.0, 0.5, 0.5], [0.0, 1.0, 1.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0], [0.5, 0.0, 0.5], [0.5, 0.5, 1.0], [0.5, 0.5, 0.0], [0.5, 1.0, 0.5], [1.0, 0.0, 1.0], [1.0, 0.0, 0.0], [1.0, 0.5, 0.5], [1.0, 1.0, 0.0], [1.0, 1.0, 1.0]]];
-        var FE1 = ['FE1', 'FE', 1.24, 0xff0000, 0x3e3e3e, [(0.192322, 0.192322, 0.192322), [0.192322, 0.192322, 0.192322], [0.192322, 0.192322, 0.807678], [0.192322, 0.692322, 0.692322], [0.192322, 0.692322, 0.307678], [0.192322, 0.807678, 0.807678], [0.192322, 0.807678, 0.192322], [0.192322, 0.307678, 0.307678], [0.192322, 0.307678, 0.692322], [0.307678, 0.807678, 0.692322], [0.307678, 0.192322, 0.307678], [0.307678, 0.807678, 0.307678], [0.307678, 0.192322, 0.692322], [0.307678, 0.307678, 0.192322], [0.307678, 0.692322, 0.807678], [0.307678, 0.307678, 0.807678], [0.307678, 0.692322, 0.192322], [0.692322, 0.192322, 0.692322], [0.692322, 0.192322, 0.307678], [0.692322, 0.692322, 0.192322], [0.692322, 0.692322, 0.807678], [0.692322, 0.807678, 0.307678], [0.692322, 0.807678, 0.692322], [0.692322, 0.307678, 0.807678], [0.692322, 0.307678, 0.192322], [0.807678, 0.807678, 0.192322], [0.807678, 0.192322, 0.807678], [0.807678, 0.807678, 0.807678], [0.807678, 0.192322, 0.192322], [0.807678, 0.307678, 0.692322], [0.807678, 0.692322, 0.307678], [0.807678, 0.307678, 0.307678], [0.807678, 0.692322, 0.692322]]];
-        var SI1 = ['SI1', 'SI', 1.17, 0x3333ff, 0x131313, [[0.0, 0.291237, 0.0], [0.0, 0.708763, 0.0], [0.0, 0.0, 0.291237], [0.0, 0.791237, 0.5], [0.0, 0.0, 0.708763], [0.0, 0.208763, 0.5], [0.0, 0.5, 0.791237], [0.0, 0.291237, 1.0], [0.0, 0.5, 0.208763], [0.0, 0.708763, 1.0], [0.0, 1.0, 0.291237], [0.0, 1.0, 0.708763], [0.208763, 0.0, 0.5], [0.208763, 0.5, 1.0], [0.208763, 0.5, 0.0], [0.208763, 1.0, 0.5], (0.291237, 0.0, 0.0), [0.291237, 0.0, 0.0], [0.291237, 0.5, 0.5], [0.291237, 1.0, 1.0], [0.291237, 0.0, 1.0], [0.291237, 1.0, 0.0], [0.5, 0.291237, 0.5], [0.5, 0.791237, 0.0], [0.5, 0.708763, 0.5], [0.5, 0.0, 0.791237], [0.5, 0.791237, 1.0], [0.5, 0.208763, 0.0], [0.5, 0.5, 0.291237], [0.5, 0.0, 0.208763], [0.5, 0.208763, 1.0], [0.5, 0.5, 0.708763], [0.5, 1.0, 0.791237], [0.5, 1.0, 0.208763], [0.708763, 0.0, 0.0], [0.708763, 0.5, 0.5], [0.708763, 0.0, 1.0], [0.708763, 1.0, 0.0], [0.708763, 1.0, 1.0], [0.791237, 0.0, 0.5], [0.791237, 0.5, 1.0], [0.791237, 1.0, 0.5], [0.791237, 0.5, 0.0], [1.0, 0.291237, 1.0], [1.0, 0.291237, 0.0], [1.0, 0.791237, 0.5], [1.0, 0.0, 0.291237], [1.0, 0.208763, 0.5], [1.0, 0.708763, 1.0], [1.0, 0.5, 0.791237], [1.0, 0.708763, 0.0], [1.0, 1.0, 0.291237], [1.0, 0.0, 0.708763], [1.0, 0.5, 0.208763], [1.0, 1.0, 0.708763]]];
-        var C1 = ['C1', 'C', 0.77, 0xffffff, 0x000000, [(0.101317, 0.25, 0.25), [0.101317, 0.25, 0.25], [0.101317, 0.75, 0.75], [0.101317, 0.25, 0.75], [0.101317, 0.75, 0.25], [0.25, 0.101317, 0.25], [0.25, 0.101317, 0.75], [0.25, 0.25, 0.101317], [0.25, 0.601317, 0.75], [0.25, 0.601317, 0.25], [0.25, 0.898683, 0.75], [0.25, 0.898683, 0.25], [0.25, 0.25, 0.898683], [0.25, 0.75, 0.601317], [0.25, 0.25, 0.601317], [0.25, 0.398683, 0.25], [0.25, 0.398683, 0.75], [0.25, 0.75, 0.101317], [0.25, 0.75, 0.898683], [0.25, 0.75, 0.398683], [0.25, 0.25, 0.398683], [0.398683, 0.75, 0.75], [0.398683, 0.25, 0.25], [0.398683, 0.75, 0.25], [0.398683, 0.25, 0.75], [0.601317, 0.25, 0.75], [0.601317, 0.75, 0.25], [0.601317, 0.25, 0.25], [0.601317, 0.75, 0.75], [0.75, 0.101317, 0.75], [0.75, 0.101317, 0.25], [0.75, 0.898683, 0.25], [0.75, 0.898683, 0.75], [0.75, 0.25, 0.101317], [0.75, 0.601317, 0.25], [0.75, 0.75, 0.101317], [0.75, 0.25, 0.898683], [0.75, 0.75, 0.898683], [0.75, 0.25, 0.601317], [0.75, 0.398683, 0.75], [0.75, 0.398683, 0.25], [0.75, 0.601317, 0.75], [0.75, 0.75, 0.601317], [0.75, 0.25, 0.398683], [0.75, 0.75, 0.398683], [0.898683, 0.75, 0.25], [0.898683, 0.25, 0.75], [0.898683, 0.75, 0.75], [0.898683, 0.25, 0.25]]];
-        
-        init();
-        animate();
-        
-        function init() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-            camera.position.z = 25;
-            
-            var a = 15.59120;
-            var b = 15.59120;
-            var c = 15.59120;
-            unitCellFrm = new THREE.BoxGeometry( a, b, c );
-            unitCellStf = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-            unitCell = new THREE.Mesh( unitCellFrm, unitCellStf );
-            scene.add(unitCell);
-            
-            var atomScale = 0.5;
-            
-
-            var name = PR1[0];
-            var element = PR1[1];
-            var radius = PR1[2];
-            var colorCode = PR1[3];
-            var thermalCode = PR1[4];
-            var positions = PR1[5];
-            
-            var geometry = new THREE.SphereGeometry( radius * atomScale, 8, 8 );
-            var group = new THREE.Group();
-            group.name = name;
-            group.element = element;
-            
-            for ( var i = 0; i < positions.length; i ++ ) {
-            	var object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: colorCode, wireframe: true } ) );
-            	object.position.x = a * positions[i][0] - 0.5 * a;
-            	object.position.y = b * positions[i][1] - 0.5 * b;
-            	object.position.z = c * positions[i][2] - 0.5 * c;
-            	group.add( object );
-            }
-            
-            scene.add ( group );
-
-            var name = PR2[0];
-            var element = PR2[1];
-            var radius = PR2[2];
-            var colorCode = PR2[3];
-            var thermalCode = PR2[4];
-            var positions = PR2[5];
-            
-            var geometry = new THREE.SphereGeometry( radius * atomScale, 8, 8 );
-            var group = new THREE.Group();
-            group.name = name;
-            group.element = element;
-            
-            for ( var i = 0; i < positions.length; i ++ ) {
-            	var object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: colorCode, wireframe: true } ) );
-            	object.position.x = a * positions[i][0] - 0.5 * a;
-            	object.position.y = b * positions[i][1] - 0.5 * b;
-            	object.position.z = c * positions[i][2] - 0.5 * c;
-            	group.add( object );
-            }
-            
-            scene.add ( group );
-
-            var name = PR3[0];
-            var element = PR3[1];
-            var radius = PR3[2];
-            var colorCode = PR3[3];
-            var thermalCode = PR3[4];
-            var positions = PR3[5];
-            
-            var geometry = new THREE.SphereGeometry( radius * atomScale, 8, 8 );
-            var group = new THREE.Group();
-            group.name = name;
-            group.element = element;
-            
-            for ( var i = 0; i < positions.length; i ++ ) {
-            	var object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: colorCode, wireframe: true } ) );
-            	object.position.x = a * positions[i][0] - 0.5 * a;
-            	object.position.y = b * positions[i][1] - 0.5 * b;
-            	object.position.z = c * positions[i][2] - 0.5 * c;
-            	group.add( object );
-            }
-            
-            scene.add ( group );
-
-            var name = PR4[0];
-            var element = PR4[1];
-            var radius = PR4[2];
-            var colorCode = PR4[3];
-            var thermalCode = PR4[4];
-            var positions = PR4[5];
-            
-            var geometry = new THREE.SphereGeometry( radius * atomScale, 8, 8 );
-            var group = new THREE.Group();
-            group.name = name;
-            group.element = element;
-            
-            for ( var i = 0; i < positions.length; i ++ ) {
-            	var object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: colorCode, wireframe: true } ) );
-            	object.position.x = a * positions[i][0] - 0.5 * a;
-            	object.position.y = b * positions[i][1] - 0.5 * b;
-            	object.position.z = c * positions[i][2] - 0.5 * c;
-            	group.add( object );
-            }
-            
-            scene.add ( group );
-
-            var name = FE1[0];
-            var element = FE1[1];
-            var radius = FE1[2];
-            var colorCode = FE1[3];
-            var thermalCode = FE1[4];
-            var positions = FE1[5];
-            
-            var geometry = new THREE.SphereGeometry( radius * atomScale, 8, 8 );
-            var group = new THREE.Group();
-            group.name = name;
-            group.element = element;
-            
-            for ( var i = 0; i < positions.length; i ++ ) {
-            	var object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: colorCode, wireframe: true } ) );
-            	object.position.x = a * positions[i][0] - 0.5 * a;
-            	object.position.y = b * positions[i][1] - 0.5 * b;
-            	object.position.z = c * positions[i][2] - 0.5 * c;
-            	group.add( object );
-            }
-            
-            scene.add ( group );
-
-            var name = SI1[0];
-            var element = SI1[1];
-            var radius = SI1[2];
-            var colorCode = SI1[3];
-            var thermalCode = SI1[4];
-            var positions = SI1[5];
-            
-            var geometry = new THREE.SphereGeometry( radius * atomScale, 8, 8 );
-            var group = new THREE.Group();
-            group.name = name;
-            group.element = element;
-            
-            for ( var i = 0; i < positions.length; i ++ ) {
-            	var object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: colorCode, wireframe: true } ) );
-            	object.position.x = a * positions[i][0] - 0.5 * a;
-            	object.position.y = b * positions[i][1] - 0.5 * b;
-            	object.position.z = c * positions[i][2] - 0.5 * c;
-            	group.add( object );
-            }
-            
-            scene.add ( group );
-
-            var name = C1[0];
-            var element = C1[1];
-            var radius = C1[2];
-            var colorCode = C1[3];
-            var thermalCode = C1[4];
-            var positions = C1[5];
-            
-            var geometry = new THREE.SphereGeometry( radius * atomScale, 8, 8 );
-            var group = new THREE.Group();
-            group.name = name;
-            group.element = element;
-            
-            for ( var i = 0; i < positions.length; i ++ ) {
-            	var object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: colorCode, wireframe: true } ) );
-            	object.position.x = a * positions[i][0] - 0.5 * a;
-            	object.position.y = b * positions[i][1] - 0.5 * b;
-            	object.position.z = c * positions[i][2] - 0.5 * c;
-            	group.add( object );
-            }
-            
-            scene.add ( group );
-
-                
-                renderer = new THREE.WebGLRenderer();
-                renderer.setSize( window.innerWidth, window.innerHeight );
-                document.body.appendChild( renderer.domElement );
-            }
-            
-            function animate() {
-                requestAnimationFrame( animate );
-                for ( var i = 0, l = scene.children.length; i < l; i ++ ) {
-                    var object = scene.children[ i ];
-                    object.rotation.x += 0.001;
-                    object.rotation.y += 0.002;
-            }
-            
-            renderer.render( scene, camera );
-            
-        }</script></body></html>
+    <canvas id="c"></canvas></body></html>
