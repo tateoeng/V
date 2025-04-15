@@ -2,7 +2,9 @@
 <html>
 <!-- 
 To-dos
-1. control toggle to display/hide unique positions
+1. control toggle to
+   a. display/hide unique positions
+   b. animate
 2. add more lights
 3. rewrite python file in php
 4. allow input of cif and res files
@@ -18,11 +20,12 @@ To-dos
         
     <script type="importmap"> {
         "imports": {
-            "three": "./build/three.module.js" } } </script>
+            "three": "./three.js-dev/build/three.module.js" } } </script>
 
     <script type="module">
 import * as THREE from 'three';
-import { TrackballControls } from './examples/jsm/controls/TrackballControls.js';
+import { TrackballControls } from './three.js-dev/examples/jsm/controls/TrackballControls.js';
+import { GUI } from 'https://cdn.jsdelivr.net/npm/lil-gui@0.20.0/+esm';
 
 const canvas = document.querySelector( '#c' );
 const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
@@ -123,6 +126,8 @@ var data = [['PR1', 1.86, 0xD9FFC8, [[0.0, 0.162959, 0.162959], [0.0, 0.162959, 
     const depth  = ucz;
     addLineGeometry( 0, 0, 0, new THREE.EdgesGeometry( new THREE.BoxGeometry( width, height, depth ) ) ); }
 
+const gui = new GUI();
+
 var atomScale = 0.5;
 
 for (var j = 0; j < data.length; j++) {
@@ -147,6 +152,9 @@ for (var j = 0; j < data.length; j++) {
         atom.position.z = ucz * ( positions[ i ][ 2 ] - 0.5 );
         ucContent.add( atom );
     }
+    
+    const atomFolder = gui.addFolder( name );
+    atomFolder.add( ucContent, 'visible' );
     
     addObject( 0, 0, 0, ucContent );
 }
@@ -186,6 +194,7 @@ function render( time ) {
 }
 
 requestAnimationFrame( render );
+
 </script></head>
 
 <body>
