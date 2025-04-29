@@ -1,35 +1,36 @@
 <!DOCTYPE html>
 <html>
-<!-- 
-To-dos
-1. rewrite python file in php
-2. allow input of cif and res files
-3. account for monoclinic, triclinic, trigonal, and hexagonal unit cells
--->
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>three.js test</title>
     <style>
+
         html, body { margin: 0; height: 100%; }
-        #c { width: 100%; height: 100%; display: block; } </style>
-        
-    <script type="importmap"> {
-        "imports": {
-            "three": "./three.js-dev/build/three.module.js" } } </script>
+        #c { width: 100%; height: 100%; display: block; }
+
+    </style>
+
+    <script type="importmap">
+
+        {
+            "imports": {
+                "three": "./three.js-dev/build/three.module.js" 
+            } 
+        } 
+
+    </script>
 
     <script type="module">
+
 import * as THREE from 'three';
 import { TrackballControls } from './three.js-dev/examples/jsm/controls/TrackballControls.js';
 import { GUI } from 'https://cdn.jsdelivr.net/npm/lil-gui@0.20.0/+esm';
-
 const canvas = document.querySelector( '#c' );
 const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
-
 // scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xffffff );
-
 // camera
 const fov = 40;
 const aspect = 2; // the canvas default
@@ -37,86 +38,68 @@ const near = 0.1;
 const far = 1000;
 const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
 camera.position.z = 50;
-
 // controls
 const controls = new TrackballControls(camera, renderer.domElement);
-
 // 2 directional lights, set up in different positions
 {
-
     const color = 0xffffff;
     const intensity = 1.5;
     const light = new THREE.DirectionalLight( color, intensity );
     light.position.set( - 1, 2, 4 );
     scene.add( light ); 
-
 }
-
 {
-
     const color = 0xffffff;
     const intensity = 1.5;
     const light = new THREE.DirectionalLight( color, intensity );
     light.position.set( 1, - 2, - 4 );
     scene.add( light ); 
-
 }
-
+// 1 ambient light
 {
-
     const color = 0xffffff;
     const intensity = 1.5;
     const light = new THREE.AmbientLight( color, intensity );
     scene.add( light ); 
-
 }
-
-scene.fog = new THREE.Fog( 0xffffff, 35, 75 );
-
+// fog
+//scene.fog = new THREE.Fog( 0xffffff, 35, 65 );
 const objects = [];
 const spread = 1;
-
 function addObject( x, y, z, obj ) {
-
     obj.position.x = x * spread;
     obj.position.y = y * spread;
     obj.position.z = z * spread;
-
     scene.add( obj );
     objects.push( obj );
-
 }
-
 function addLineGeometry( x, y, z, geometry ) {
-
     const material = new THREE.LineBasicMaterial( { color: 0xff0000 } );
     const mesh = new THREE.LineSegments( geometry, material );
     addObject( x, y, z, mesh );
-
 }
-
-    // polyhedron geometry - possible asset to define triclinic, monoclinic, trigonal and hexagonal unit cells
-    //{
-    //
-    //    const verticesOfCube = [
-    //        - 1, - 1, - 1,        1, - 1, - 1,
-    //          1,   1, - 1,      - 1,   1, - 1,
-    //        - 1, - 1,   1,        1, - 1,   1,
-    //          1,   1,   1,      - 1,   1,   1,
-    //    ];
-    //    const indicesOfFaces = [
-    //        2, 1, 0,   0, 3, 2,
-    //        0, 4, 7,   7, 3, 0,
-    //        0, 1, 5,   5, 4, 0,
-    //        1, 2, 6,   6, 5, 1,
-    //        2, 3, 7,   7, 6, 2,
-    //        4, 5, 6,   6, 7, 4,
-    //    ];
-    //    const radius = 7;
-    //    const detail = 1;
-    //    addLineGeometry( - 1, 0, new THREE.PolyhedronGeometry( verticesOfCube, indicesOfFaces, radius, detail ) );
-    //
-    //}
+// polyhedron geometry - possible asset to define triclinic, monoclinic, trigonal and hexagonal unit cells
+//{
+//
+//    const verticesOfCube = [
+//        - 1, - 1, - 1,        1, - 1, - 1,
+//          1,   1, - 1,      - 1,   1, - 1,
+//        - 1, - 1,   1,        1, - 1,   1,
+//          1,   1,   1,      - 1,   1,   1,
+//    ];
+//    const indicesOfFaces = [
+//        2, 1, 0,   0, 3, 2,
+//        0, 4, 7,   7, 3, 0,
+//        0, 1, 5,   5, 4, 0,
+//        1, 2, 6,   6, 5, 1,
+//        2, 3, 7,   7, 6, 2,
+//        4, 5, 6,   6, 7, 4,
+//    ];
+//    const radius = 7;
+//    const detail = 1;
+//    addLineGeometry( - 1, 0, new THREE.PolyhedronGeometry( verticesOfCube, indicesOfFaces, radius, detail ) );
+//
+//}
 
 var ucx = 15.5912;
 var ucy = 15.5912;
@@ -186,9 +169,6 @@ for (var j = 0; j < data.length; j++) {
     addObject( 0, 0, 0, ucContent );
 }
 
-console.log( objects[0] );
-
-
 // listener that returns if browser resizes
 function resizeRendererToDisplaySize( renderer ) {
 
@@ -221,11 +201,11 @@ function render( time ) {
 
     objects.forEach( obj => {
     
-        const rot = time;
-        //const rot = time * params.animate;
-        obj.rotation.x = rot * 0.11;
-        obj.rotation.y = rot * 0.17;
-        obj.rotation.z = rot * 0.23;
+        // const rot = time;
+        const rot = time * params.animate;
+        obj.rotation.x = rot * 0.10;
+        obj.rotation.y = rot * 0.15;
+        obj.rotation.z = rot * 0.25;
         
         obj.children.forEach( atom => {
         
@@ -245,7 +225,10 @@ function render( time ) {
 
 requestAnimationFrame( render );
 
-</script></head>
+    </script>
+</head>
 
 <body>
-    <canvas id="c"></canvas></body></html>
+    <canvas id="c"></canvas>
+</body>
+</html>
