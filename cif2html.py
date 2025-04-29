@@ -1,66 +1,32 @@
 #!/bin/python
+import re, sys
 from sys import argv as argument
-import re
+from CifFile import ReadCif
 
-def collapse_whitespace(text): return re.sub(r'\s+', ' ', text).strip()
+filename = argument[1]
+filename_parse = filename.split('.')
+data_block = filename_parse[0]
+suffix = filename_parse[1]
 
-text = []
+if suffix != 'cif':
+    print('this is not a cif file!')
+    print()
+    sys.exit()
+    
+file = ReadCif(argument[1])
+data_block = file[data_block]
 
-file = open(argument[1], 'r')
-for line in file: text.append(collapse_whitespace(line.rstrip()))
-file.close()
+uca     = float(data_block['_cell_length_a'].split('(')[0])
+ucb     = float(data_block['_cell_length_b'].split('(')[0])
+ucc     = float(data_block['_cell_length_c'].split('(')[0])
+alpha   = float(data_block['_cell_angle_alpha'].split('(')[0])
+beta    = float(data_block['_cell_angle_beta'].split('(')[0])
+gamma   = float(data_block['_cell_angle_gamma'].split('(')[0])
 
-# make a list of indices where loops begin
-indices = [i + 1 for i, x in enumerate(text) if x == 'loop_'] + [len(text) + 1]
-dictionary = {}
-
-for i in range(len(indices) - 1):
-    dictionary[text[indices[i]]] = []
-    for j in range(indices[i] + 1, indices[i + 1] - 1):
-        dictionary[text[indices[i]]].append(text[j])
-
-for entry in dictionary:
-    if entry in ['_publ_author_name', '_symmetry_equiv_pos_as_xyz']:
-        for item in dictionary[entry]:
-            if item.split('_')[0] == '':
-                index = dictionary[entry].index(item)
-                dictionary[entry] = dictionary[entry][:index]
-                break
-    elif entry in ['_atom_site_aniso_label', '_atom_site_label', '_atom_type_symbol']:
-        dictionary[entry] = [entry] + dictionary[entry]
-        rewrite = []
-        counter = 0
-        for item in dictionary[entry]:
-            if '' in item.split('_'): counter += 1
-        rewrite += [dictionary[entry][:counter]]
-        for item in dictionary[entry][counter:]: rewrite += [item.split(' ')]
-        dictionary[entry] = rewrite
-
-for line in text:
-    if line.split(' ')[0] == '_space_group_IT_number': dictionary[line.split(' ')[0]] = line.split(' ')[1]
-    if line.split(' ')[0] == '_cell_angle_alpha': dictionary[line.split(' ')[0]] = line.split(' ')[1]
-    if line.split(' ')[0] == '_cell_angle_beta': dictionary[line.split(' ')[0]] = line.split(' ')[1]
-    if line.split(' ')[0] == '_cell_angle_gamma': dictionary[line.split(' ')[0]] = line.split(' ')[1]
-    if line.split(' ')[0] == '_cell_formula_units_Z': dictionary[line.split(' ')[0]] = line.split(' ')[1]
-    if line.split(' ')[0] == '_cell_length_a': dictionary[line.split(' ')[0]] = line.split(' ')[1]
-    if line.split(' ')[0] == '_cell_length_b': dictionary[line.split(' ')[0]] = line.split(' ')[1]
-    if line.split(' ')[0] == '_cell_length_c': dictionary[line.split(' ')[0]] = line.split(' ')[1]
-
-print("var uca = " + dictionary["_cell_length_a"].split('(')[0] + ";")
-print("var ucb = " + dictionary["_cell_length_b"].split('(')[0] + ";")
-print("var ucc = " + dictionary["_cell_length_c"].split('(')[0] + ";")
+print("var uca = " + str(uca) + ";")
+print("var ucb = " + str(ucb) + ";")
+print("var ucc = " + str(ucc) + ";")
 print()
-
-data = []
-
-#for entry in dictionary:
-#    print(entry)
-#    print(dictionary[entry])
-#    print()
-
-indx = dictionary['_atom_site_label'][0].index('_atom_site_fract_x')
-indy = dictionary['_atom_site_label'][0].index('_atom_site_fract_x') + 1
-indz = dictionary['_atom_site_label'][0].index('_atom_site_fract_x') + 2
 
 radNClr = {  "H":[0.37,"0xFFFFFF"],
             "He":[0.32,"0xD9FFFF"],
@@ -87,7 +53,7 @@ radNClr = {  "H":[0.37,"0xFFFFFF"],
              "V":[1.25,"0xA7A5AC"],
             "Cr":[1.27,"0x8B99C6"],
             "Mn":[1.39,"0x9C7BC6"],
-            "Fe":[1.25,"0x817BC6"],
+            "Fe":[1.25,"0xff0000"],
             "Co":[1.26,"0x707BC3"],
             "Ni":[1.21,"0x5D7BC3"],
             "Cu":[1.38,"0xFF7B62"],
@@ -166,16 +132,6 @@ radNClr = {  "H":[0.37,"0xFFFFFF"],
             "No":[1.70,"0xBD0D87"],
             "Lr":[1.70,"0xC90066"]}
 
-spaceGroups = { "225":  [["x", "y", "z"], ["-x", "-y", "z"], ["-x", "y", "-z"], ["z", "x", "y"],   ["y", "x", "-z"], ["-x", "-y", "-z"], ["x", "y + 0.5", "z + 0.5"], ["x + 0.5", "y", "z + 0.5"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]],
-
-                "123": [["x", "y", "z"], ["-x", "-y", "z"], ["-y", "x",  "z"], ["-x", "y", "-z"], ["-x", "-y", "-z"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]],
-                
-                "221":  [["x", "y", "z"], ["-x", "-y", "z"], ["-x", "y", "-z"], ["z",  "x",  "y"], [ "y",  "x", "-z"], ["-x", "-y", "-z"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]],
-
-                "222": [["x", "y", "z"], ["-x+.5","-y+.5","z"], ["-x+.5","y","-z+.5"], ["z",  "x",  "y"], ["y", "x", "-z+.5"], ["-x", "-y", "-z"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]]
-
-                }
-
 def adjust(x):
     while x < 0.0: x += 1
     while x > 1.0: x -= 1
@@ -206,20 +162,46 @@ def generate(q, g):
     q1[-1] = list(q1[-1])
     return q1
     
-spaceGroupNumber = dictionary['_space_group_IT_number']
+spaceGroupNumber = data_block['_space_group_IT_number']
+spaceGroups = { 
+    "123": [["x", "y", "z"], ["-x", "-y", "z"], ["-y", "x",  "z"], ["-x", "y", "-z"], ["-x", "-y", "-z"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]],
+    
+    "215": [["x", "y", "z"], ["-x", "-y", "z"], ["-x", "y", "-z"], ["z",  "x",  "y"], ["y", "x", "z"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]],
+    
+    "221":  [["x", "y", "z"], ["-x", "-y", "z"], ["-x", "y", "-z"], ["z",  "x",  "y"], [ "y",  "x", "-z"], ["-x", "-y", "-z"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]],
+    
+    "222": [["x", "y", "z"], ["-x+.5","-y+.5","z"], ["-x+.5","y","-z+.5"], ["z",  "x",  "y"], ["y", "x", "-z+.5"], ["-x", "-y", "-z"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]],
+    
+    "225":  [["x", "y", "z"], ["-x", "-y", "z"], ["-x", "y", "-z"], ["z", "x", "y"],   ["y", "x", "-z"], ["-x", "-y", "-z"], ["x", "y + 0.5", "z + 0.5"], ["x + 0.5", "y", "z + 0.5"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]],
+    
+    "226": [["x", "y", "z"], ["-x", "-y", "z"], ["-x", "y", "-z"], ["z", "x", "y"], ["y+.5","x+.5","-z+.5"], ["-x", "-y", "-z"], ["x","y+.5","z+.5"], ["x+.5","y","z+.5"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]],
+    
+    "227": [["x", "y", "z"], ["-x+.75","-y+.25","z+.5"], ["-x+.25","y+.5","-z+.75"], ["z", "x", "y"], ["y+.75","x+.25","-z+.5"], ["-x", "-y", "-z"], ["x","y+.5","z+.5"], ["x+.5","y","z+.5"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]],
+    
+    "228": [["x", "y", "z"], ["-x+.25","-y+.75","z+.5"], ["-x+.75","y+.5","-z+.25"], ["z", "x", "y"], ["y+.75","x+.25","-z"], ["-x","-y","-z"], ["x","y+.5","z+.5"], ["x+.5","y","z+.5"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]],
+    
+    "229": [["x", "y", "z"], ["-x", "-y", "z"], ["-x", "y", "-z"], ["z", "x", "y"], ["y", "x", "-z"], ["-x", "-y", "-z"], ["x+.5", "y+.5", "z+.5"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]],
 
-for atom in dictionary['_atom_site_label']:
-    if atom[0] == '_atom_site_label': continue
-    else:
-        atomName = atom[0]
-        element = ''.join([i for i in atomName if not i.isdigit()]).capitalize()
-        genPos = [[float(atom[indx].split('(')[0]), float(atom[indy].split('(')[0]), float(atom[indz].split('(')[0])]]
-        
-        radius = radNClr[element]
-        color = radius[1]
-        radius = radius[0]
-        specialPos = [generate(genPos, spaceGroups[spaceGroupNumber])]
-        
-        data += [[atomName, radius, color] + [q for q in specialPos]]
+    "230": [["x", "y", "z"], ["-x+.5","-y","z+.5"], ["-x","y+.5","-z+.5"], ["z", "y", "x"], ["y+.75","x+.25","-z+.25"], ["-x", "-y", "-z"], ["x+.5", "y+.5", "z+.5"], ["x + 1.0", "y", "z"], ["x", "y + 1.0", "z"], ["x", "y", "z + 1.0"]]
+}
 
-print('var data = ' + str(data) + ';')
+atomData = []
+
+for i in range(len(data_block['_atom_site_label'])):
+    atomSite    = data_block['_atom_site_label'][i]
+    
+    atomType    = re.sub(r'[^a-zA-Z\s]', '', data_block['_atom_site_type_symbol'][i])
+    atomRadius  = radNClr[atomType][0]
+    atomColor   = radNClr[atomType][1]
+    
+    fractX      = adjust(float(data_block['_atom_site_fract_x'][i].split('(')[0]))
+    fractY      = adjust(float(data_block['_atom_site_fract_y'][i].split('(')[0]))
+    fractZ      = adjust(float(data_block['_atom_site_fract_z'][i].split('(')[0]))
+    generalPos  = [fractX, fractY, fractZ]
+    specialPos  = generate([generalPos], spaceGroups[spaceGroupNumber])
+    
+    entry       = [atomSite, atomRadius, atomColor, specialPos]
+    atomData.append(entry)
+    
+print('var data = ' + str(atomData) + ';')
+
